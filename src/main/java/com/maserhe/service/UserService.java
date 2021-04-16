@@ -3,6 +3,8 @@ package com.maserhe.service;
 import com.maserhe.entity.Password;
 import com.maserhe.entity.User;
 import com.maserhe.entity.Vo.UserVo;
+import com.maserhe.error.BusinessException;
+import com.maserhe.error.EmBusinesssError;
 import com.maserhe.mapper.PasswordMapper;
 import com.maserhe.mapper.UserMapper;
 import com.maserhe.service.model.UserModel;
@@ -57,6 +59,10 @@ public class UserService {
     }
 
 
+    public void register(UserModel userModel) throws BusinessException {
+        if (userModel == null) throw new BusinessException(EmBusinesssError.PARAMETER_VALIDATION_ERROR);
 
+
+    }
 
 }
