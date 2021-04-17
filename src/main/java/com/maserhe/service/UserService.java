@@ -11,6 +11,7 @@ import com.maserhe.service.model.UserModel;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import tk.mybatis.mapper.entity.Example;
 
 
@@ -55,14 +56,28 @@ public class UserService {
         UserModel userModel = new UserModel();
         BeanUtils.copyProperties(user, userModel);
         userModel.setEncryptPassword(password.getEncryptPassword());
+
         return userModel;
     }
 
 
     public void register(UserModel userModel) throws BusinessException {
         if (userModel == null) throw new BusinessException(EmBusinesssError.PARAMETER_VALIDATION_ERROR);
+        if (StringUtils.isEmpty(userModel.getName())
+            ||StringUtils.isEmpty(userModel.getEncryptPassword())
+            ||StringUtils.isEmpty(userModel.getGender())
+            ||StringUtils.isEmpty(userModel.getTelephone())) throw new BusinessException(EmBusinesssError.PARAMETER_VALIDATION_ERROR, "参数为空");
 
+        User user = new User();
+        Password password = new Password();
 
+        // UserModel 转化为 user
+        BeanUtils.copyProperties(userModel, user);
+        BeanUtils.copyProperties(userModel, password);
+
+        int id = userMapper.insertSelective(user);
+        password.setUserId(id);
+        passwordMapper.insertSelective(password);
     }
 
 }

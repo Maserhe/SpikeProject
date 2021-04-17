@@ -6,6 +6,9 @@ import com.maserhe.error.EmBusinesssError;
 import com.maserhe.response.CommonReturnType;
 import com.maserhe.service.UserService;
 import com.maserhe.service.model.UserModel;
+import org.apache.tomcat.util.security.MD5Encoder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -23,11 +26,13 @@ import javax.servlet.http.HttpServletRequest;
  */
 @Controller
 @RequestMapping("/user")
+@CrossOrigin(allowedHeaders = "*", allowCredentials = "true")
 public class UserController {
 
     @Autowired
     private UserService userService;
 
+    private Logger logger = LoggerFactory.getLogger(UserController.class);
 
     /**
      * 返回相应的view
@@ -72,12 +77,16 @@ public class UserController {
         // 将验证码发送给用户
         // System.out.println(otpCode);
         request.getSession().setAttribute(phone, otpCode);
-        return CommonReturnType.create(otpCode);
 
+        // System.out.println(request.getSession().getAttribute(phone));
+
+        // 记录一下日志
+        logger.info("手机号:" + phone + " 验证码 " + random);
+        return CommonReturnType.create(otpCode);
     }
 
     /**
-     * 用户注册
+     * 用户注册接口
      * @param name
      * @param gender
      * @param age
@@ -85,13 +94,28 @@ public class UserController {
      * @return
      */
 
+    @PostMapping(path = "/register", consumes = {"application/x-www-form-urlencoded"})
+    @ResponseBody
     public CommonReturnType register(@RequestParam(name = "name") String name,
                                      @RequestParam(name = "gender") Integer gender,
                                      @RequestParam(name = "age") Integer age,
+                                     @RequestParam(name = "password") String password,
+                                     @RequestParam(name = "otpCode") String otpCode,
                                      @RequestParam(name = "telephone") String telephone, HttpServletRequest request) throws BusinessException {
         // 获取验证码
         String attribute = (String) request.getSession().getAttribute(telephone);
-        if (attribute == null || telephone == null) throw new BusinessException(EmBusinesssError.PARAMETER_VALIDATION_ERROR);
+        if (attribute == null || telephone == null) throw new BusinessException(EmBusinesssError.PARAMETER_VALIDATION_ERROR, "验证码不正确");
+
+        // 用户注册
+        UserModel userModel = new UserModel();
+        userModel.setName(name);
+        userModel.setAge(age);
+        userModel.setGender(gender);
+        userModel.setTelephone(telephone);
+        userModel.setEncryptPassword(MD5Encoder.encode(password.getBytes()));
+        userModel.setRegisterCode("byPhone");
+
+        userService.register(userModel);
         return null;
     }
 

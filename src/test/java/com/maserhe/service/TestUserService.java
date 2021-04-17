@@ -1,5 +1,6 @@
 package com.maserhe.service;
 
+import com.maserhe.error.BusinessException;
 import com.maserhe.service.model.UserModel;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,4 +27,22 @@ public class TestUserService {
         System.out.println(userById);
 
     }
+
+    @Test
+    public void testUserService2() throws BusinessException {
+
+        UserModel userModel = userService.getUserById(1);
+        userModel.setId(null);
+
+
+
+
+        userService.register(userModel);
+
+
+
+    }
+
+
+
 }
