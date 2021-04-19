@@ -1,9 +1,12 @@
 package com.maserhe.controller;
 
+
+import com.maserhe.entity.Password;
 import com.maserhe.entity.Vo.UserVo;
 import com.maserhe.error.BusinessException;
 import com.maserhe.error.EmBusinesssError;
 import com.maserhe.response.CommonReturnType;
+import com.maserhe.service.PasswordService;
 import com.maserhe.service.UserService;
 import com.maserhe.service.model.UserModel;
 import org.apache.tomcat.util.security.MD5Encoder;
@@ -12,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.util.DigestUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -26,11 +30,13 @@ import javax.servlet.http.HttpServletRequest;
  */
 @Controller
 @RequestMapping("/user")
-@CrossOrigin(allowedHeaders = "*", allowCredentials = "true")
 public class UserController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private PasswordService passwordService;
 
     private Logger logger = LoggerFactory.getLogger(UserController.class);
 
@@ -61,6 +67,14 @@ public class UserController {
         return userVo;
     }
 
+    private Password passwordFromUserModel(UserModel userModel) {
+        if (userModel == null) return null;
+        Password password = new Password();
+        password.setUserId(userModel.getId());
+        password.setEncryptPassword(userModel.getEncryptPassword());
+        return password;
+    }
+
     /**
      * 获取短信接口的
      * @param phone
@@ -77,7 +91,6 @@ public class UserController {
         // 将验证码发送给用户
         // System.out.println(otpCode);
         request.getSession().setAttribute(phone, otpCode);
-
         // System.out.println(request.getSession().getAttribute(phone));
 
         // 记录一下日志
@@ -112,11 +125,13 @@ public class UserController {
         userModel.setAge(age);
         userModel.setGender(gender);
         userModel.setTelephone(telephone);
-        userModel.setEncryptPassword(MD5Encoder.encode(password.getBytes()));
-        userModel.setRegisterCode("byPhone");
 
-        userService.register(userModel);
-        return null;
+        userModel.setEncryptPassword(DigestUtils.md5DigestAsHex(password.getBytes()));
+        userModel.setRegisterCode("byPhone");
+        int Id = userService.register(userModel);
+        userModel.setId(Id);
+
+        return CommonReturnType.create(userVoFromUserModel(userModel));
     }
 
 

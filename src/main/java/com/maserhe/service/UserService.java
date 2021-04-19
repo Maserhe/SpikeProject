@@ -60,8 +60,13 @@ public class UserService {
         return userModel;
     }
 
-
-    public void register(UserModel userModel) throws BusinessException {
+    /**
+     *  用户注册。传入 userModel
+     * @param userModel
+     * @return
+     * @throws BusinessException
+     */
+    public int register(UserModel userModel) throws BusinessException {
         if (userModel == null) throw new BusinessException(EmBusinesssError.PARAMETER_VALIDATION_ERROR);
         if (StringUtils.isEmpty(userModel.getName())
             ||StringUtils.isEmpty(userModel.getEncryptPassword())
@@ -77,7 +82,7 @@ public class UserService {
 
         int id = userMapper.insertSelective(user);
         password.setUserId(id);
-        passwordMapper.insertSelective(password);
+        return passwordMapper.insertSelective(password);
     }
 
 }
