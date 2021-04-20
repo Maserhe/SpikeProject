@@ -2,12 +2,13 @@ package com.maserhe.service;
 
 import com.maserhe.entity.Password;
 import com.maserhe.entity.User;
-import com.maserhe.entity.Vo.UserVo;
 import com.maserhe.error.BusinessException;
 import com.maserhe.error.EmBusinesssError;
 import com.maserhe.mapper.PasswordMapper;
 import com.maserhe.mapper.UserMapper;
 import com.maserhe.service.model.UserModel;
+import com.maserhe.validator.ValidationResult;
+import com.maserhe.validator.ValidatorImpl;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -29,6 +30,9 @@ public class UserService {
 
     @Autowired
     private PasswordMapper passwordMapper;
+
+    @Autowired
+    private ValidatorImpl validator;
 
     /**
      * 获取用户的Model
@@ -68,10 +72,13 @@ public class UserService {
      */
     public int register(UserModel userModel) throws BusinessException {
         if (userModel == null) throw new BusinessException(EmBusinesssError.PARAMETER_VALIDATION_ERROR);
-        if (StringUtils.isEmpty(userModel.getName())
-            ||StringUtils.isEmpty(userModel.getEncryptPassword())
-            ||StringUtils.isEmpty(userModel.getGender())
-            ||StringUtils.isEmpty(userModel.getTelephone())) throw new BusinessException(EmBusinesssError.PARAMETER_VALIDATION_ERROR, "参数为空");
+
+        ValidationResult result = validator.validate(userModel);
+        System.out.println(result.getGetErrorMsg());
+
+        if (result.isHasError()) {
+            throw new BusinessException(EmBusinesssError.PARAMETER_VALIDATION_ERROR, result.getErrorMsg());
+        }
 
         User user = new User();
         Password password = new Password();
@@ -80,8 +87,9 @@ public class UserService {
         BeanUtils.copyProperties(userModel, user);
         BeanUtils.copyProperties(userModel, password);
 
-        int id = userMapper.insertSelective(user);
-        password.setUserId(id);
+        userMapper.insertSelective(user);
+
+        password.setUserId(user.getId());
         return passwordMapper.insertSelective(password);
     }
 

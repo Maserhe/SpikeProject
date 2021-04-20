@@ -35,6 +35,4 @@ public class MyConfiguration {
         bean.setOrder(0);
         return bean;
     }
-
-
 }

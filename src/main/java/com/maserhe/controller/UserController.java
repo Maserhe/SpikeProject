@@ -117,7 +117,7 @@ public class UserController {
                                      @RequestParam(name = "telephone") String telephone, HttpServletRequest request) throws BusinessException {
         // 获取验证码
         String attribute = (String) request.getSession().getAttribute(telephone);
-        if (attribute == null || telephone == null) throw new BusinessException(EmBusinesssError.PARAMETER_VALIDATION_ERROR, "验证码不正确");
+        if (attribute == null || telephone == null || !attribute.equals(otpCode)) throw new BusinessException(EmBusinesssError.PARAMETER_VALIDATION_ERROR, "验证码不正确");
 
         // 用户注册
         UserModel userModel = new UserModel();
@@ -128,9 +128,7 @@ public class UserController {
 
         userModel.setEncryptPassword(DigestUtils.md5DigestAsHex(password.getBytes()));
         userModel.setRegisterCode("byPhone");
-        int Id = userService.register(userModel);
-        userModel.setId(Id);
-
+        userService.register(userModel);
         return CommonReturnType.create(userVoFromUserModel(userModel));
     }
 
