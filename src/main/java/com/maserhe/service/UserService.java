@@ -74,7 +74,7 @@ public class UserService {
         if (userModel == null) throw new BusinessException(EmBusinesssError.PARAMETER_VALIDATION_ERROR);
 
         ValidationResult result = validator.validate(userModel);
-        System.out.println(result.getGetErrorMsg());
+        // System.out.println(result.getGetErrorMsg());
 
         if (result.isHasError()) {
             throw new BusinessException(EmBusinesssError.PARAMETER_VALIDATION_ERROR, result.getErrorMsg());
