@@ -9,7 +9,6 @@ import com.maserhe.response.CommonReturnType;
 import com.maserhe.service.PasswordService;
 import com.maserhe.service.UserService;
 import com.maserhe.service.model.UserModel;
-import org.apache.tomcat.util.security.MD5Encoder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;

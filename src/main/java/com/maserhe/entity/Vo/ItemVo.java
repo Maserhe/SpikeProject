@@ -1,4 +1,4 @@
-package com.maserhe.service.model;
+package com.maserhe.entity.Vo;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -7,21 +7,17 @@ import lombok.NoArgsConstructor;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-import java.math.BigDecimal;
 
 /**
  * 描述:
- * 商品的领域模型
  *
  * @author Maserhe
- * @create 2021-04-20 21:16
+ * @create 2021-04-25 17:07
  */
-
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
-public class ItemModel {
-
+public class ItemVo {
 
     private Integer id;
 

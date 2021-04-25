@@ -6,6 +6,7 @@ import com.maserhe.error.EmBusinesssError;
 import com.maserhe.mapper.StockMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import tk.mybatis.mapper.entity.Example;
 
 /**
  * 描述:
@@ -29,6 +30,14 @@ public class StockService {
         if (stock == null) throw new BusinessException(EmBusinesssError.PARAMETER_VALIDATION_ERROR);
         return stockMapper.insertSelective(stock);
     }
+
+    public Stock selectStockByItemId(Integer itemId) {
+        Example example = new Example(Stock.class);
+        example.createCriteria().andEqualTo("itemId", itemId);
+        return stockMapper.selectOneByExample(example);
+    }
+
+
 
 
 
