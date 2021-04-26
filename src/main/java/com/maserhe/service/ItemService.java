@@ -15,8 +15,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import tk.mybatis.mapper.entity.Example;
 
-import javax.swing.plaf.nimbus.NimbusStyle;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -156,6 +154,18 @@ public class ItemService {
         BeanUtils.copyProperties(item, model);
         model.setStock(stock.getStock());
         return model;
+    }
+
+    /**
+     * 减去库存
+     * @param itemId
+     * @param amount
+     * @return
+     */
+    @Transactional
+    public boolean decreaseStock(Integer itemId, Integer amount ) {
+        int row = itemMapper.decreaseItem(itemId, amount);
+        return row > 0? true: false;
     }
 
 

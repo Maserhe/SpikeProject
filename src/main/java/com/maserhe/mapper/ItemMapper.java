@@ -2,6 +2,7 @@ package com.maserhe.mapper;
 
 import com.maserhe.entity.Item;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -16,5 +17,7 @@ import java.util.List;
 public interface ItemMapper extends tk.mybatis.mapper.common.Mapper<Item>{
 
     public List<Item> listItem();
+
+    public int decreaseItem(@Param("itemId") Integer itemId, @Param("amount") Integer amount);
 
 }

@@ -7,6 +7,8 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 /**
@@ -43,5 +45,15 @@ public class TestIemService {
         itemModelList.forEach(System.out::println);
 
 
+    }
+
+
+    @Test
+    public void Test1() {
+
+        // 测试 时间
+        LocalDateTime now = LocalDateTime.now();
+        String format = now.format(DateTimeFormatter.ofPattern(now.format(DateTimeFormatter.ISO_DATE))).replace("-", "");
+        System.out.print(format);
     }
 }

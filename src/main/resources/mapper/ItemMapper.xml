@@ -3,6 +3,11 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.maserhe.mapper.ItemMapper">
+    <update id="decreaseItem">
+        update item_stock
+        set stock = stock - #{amount}
+        where item_id = #{itemId} and stock >= #{amount}
+    </update>
 
 
     <select id="listItem" resultType="com.maserhe.entity.Item">

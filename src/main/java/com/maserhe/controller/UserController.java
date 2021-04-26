@@ -15,7 +15,9 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.DigestUtils;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
+import sun.text.resources.mk.CollationData_mk;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -129,6 +131,16 @@ public class UserController {
         userModel.setRegisterCode("byPhone");
         userService.register(userModel);
         return CommonReturnType.create(userVoFromUserModel(userModel));
+    }
+
+    @PostMapping(value = "/login", consumes = {"application/x-www-form-urlencoded"})
+    public CommonReturnType login(@RequestParam("username") String username, @RequestParam("password") String password) throws BusinessException {
+        // 参数校验
+        if (StringUtils.isEmpty(username) || StringUtils.isEmpty(password)) throw new BusinessException(EmBusinesssError.PARAMETER_VALIDATION_ERROR, "用户名或者密码为空");
+
+
+
+        return CommonReturnType.create(null);
     }
 
 
